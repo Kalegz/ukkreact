@@ -62,13 +62,14 @@ class StudentResource extends Resource
                             ->directory('student-photos')
                             ->nullable(),
                             
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'active' => 'Active',
-                                'inactive' => 'Inactive',
-                                'graduated' => 'Graduated',
-                            ])
-                            ->nullable(),
+                        // Forms\Components\Select::make('pkl_report')
+                        //     ->label('PKL Report')
+                        //     ->options([
+                        //         '0' => 'Nope',
+                        //         '1' => 'Done',
+                        //     ])
+                        //     ->default('0')
+                        //     ->native(false),
                     ])
                     ->columns(2),
             ]);
@@ -97,14 +98,13 @@ class StudentResource extends Resource
                     ->circular()
                     ->defaultImageUrl(url('/images/default-avatar.png')),
                     
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\TextColumn::make('pkl_report_status')
+                    ->label('PKL Report')
+                    ->getStateUsing(function (Student $record): string {
+                        return $record->pkl_report === '1' ? 'Done' : 'Nope';
+                    })
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'active' => 'success',
-                        'inactive' => 'danger',
-                        'graduated' => 'info',
-                        default => 'gray',
-                    }),
+                    ->color(fn (string $state): string => $state === 'Done' ? 'success' : 'danger'),
                     
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d M Y H:i')
@@ -116,13 +116,6 @@ class StudentResource extends Resource
                     ->options([
                         'Laki-laki' => 'Laki-laki',
                         'Perempuan' => 'Perempuan',
-                    ]),
-                    
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
-                        'graduated' => 'Graduated',
                     ]),
             ])
             ->actions([

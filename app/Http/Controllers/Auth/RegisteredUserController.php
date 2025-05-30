@@ -38,13 +38,12 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $exists = Student::where('email', $request->email)
-            ->orWhereIn('email', Teacher::pluck('email'))
-            ->exists();
+        $isStudent = Student::where('email', $request->email)->exists();
+        $isTeacher = Teacher::where('email', $request->email)->exists();
 
-        if (!$exists) {
+        if (!$isStudent && !$isTeacher) {
             return back()->withErrors([
-                'email' => 'Email tidak ditemukan di daftar siswa atau guru.',
+                'email' => 'Email not found.',
             ])->withInput();
         }
 
@@ -53,6 +52,12 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        if ($isStudent) {
+            $user->assignRole('student');
+        } elseif ($isTeacher) {
+            $user->assignRole('teacher');
+        }
 
         event(new Registered($user));
 

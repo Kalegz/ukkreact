@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('p_k_l__assignments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('teacher_id')->constrained()->onDelete('cascade');
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
+            $table->foreignId('student_id')->constrained()->onDelete('cascade')->unique();
             $table->foreignId('industry_id')->constrained()->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');

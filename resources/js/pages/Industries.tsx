@@ -1,10 +1,20 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { useState, type ReactElement } from 'react';
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Industries',
+        href: '/industries',
+    },
+];
 
 export default function Industries({ industries }: { industries: any[] }): ReactElement {
+    const { flash } = usePage().props; // Access flash messages
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
+        business_field: '',
         address: '',
         contact: '',
         email: '',
@@ -24,10 +34,22 @@ export default function Industries({ industries }: { industries: any[] }): React
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Industries" />
 
-            <div className="p-6 bg-white rounded-lg shadow-md relative">
+            <div className="p-6 mt-4 rounded-lg shadow-md relative">
+                {/* Flash Messages */}
+                {flash.success && (
+                    <div className="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
+                        {flash.success}
+                    </div>
+                )}
+                {flash.error && (
+                    <div className="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                        {flash.error}
+                    </div>
+                )}
+
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold">Industries</h1>
                     <button
@@ -54,19 +76,19 @@ export default function Industries({ industries }: { industries: any[] }): React
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+                <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
                         <h2 className="text-xl font-semibold mb-4">Create Industry</h2>
                         <button
                             onClick={() => setIsModalOpen(false)}
-                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                         >
                             ✖
                         </button>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="name" className="block text-sm font-medium">
                                     Name*
                                 </label>
                                 <input
@@ -81,7 +103,23 @@ export default function Industries({ industries }: { industries: any[] }): React
                             </div>
 
                             <div>
-                                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="business_field" className="block text-sm font-medium">
+                                    Business Field
+                                </label>
+                                <input
+                                    type="text"
+                                    id="business_field"
+                                    value={data.business_field}
+                                    onChange={(e) => setData('business_field', e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                />
+                                {errors.business_field && (
+                                    <div className="text-red-500 text-sm">{errors.business_field}</div>
+                                )}
+                            </div>
+
+                            <div>
+                                <label htmlFor="address" className="block text-sm font-medium">
                                     Address
                                 </label>
                                 <input
@@ -95,7 +133,7 @@ export default function Industries({ industries }: { industries: any[] }): React
                             </div>
 
                             <div>
-                                <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="contact" className="block text-sm font-medium">
                                     Contact
                                 </label>
                                 <input
@@ -109,7 +147,7 @@ export default function Industries({ industries }: { industries: any[] }): React
                             </div>
 
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="email" className="block text-sm font-medium">
                                     Email
                                 </label>
                                 <input
@@ -123,7 +161,7 @@ export default function Industries({ industries }: { industries: any[] }): React
                             </div>
 
                             <div>
-                                <label htmlFor="website" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="website" className="block text-sm font-medium">
                                     Website
                                 </label>
                                 <input

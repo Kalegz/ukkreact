@@ -1,11 +1,6 @@
 <?php
 
-return [
-    'super_admin' => true,
-
-    'default_role' => 'super-admin',
-    
-    'shield_resource' => [
+return ['shield_resource' => [
         'should_register_navigation' => true,
         'slug' => 'shield/roles',
         'navigation_sort' => -1,

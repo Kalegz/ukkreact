@@ -9,10 +9,16 @@ use Illuminate\Http\RedirectResponse;
 
 class IndustryController extends Controller
 {
+    public function index()
+    {
+        //
+    }
+    
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'business_field' => 'required|string|max:255',
             'address' => 'nullable|string|max:255',
             'contact' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',

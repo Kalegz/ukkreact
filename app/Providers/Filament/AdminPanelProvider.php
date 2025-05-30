@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#FF5FFF',
             ])
             ->discoverResources(
                 in: app_path('Filament/Resources'),
@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                // 'role:super-admin',
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),

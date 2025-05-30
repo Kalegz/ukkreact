@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Industry extends Model
 {
     protected $fillable = [
-        'name', 'address', 'contact', 'email', 'website'
+        'name', 'business_field', 'address', 'contact', 'email', 'website'
     ];
 
     public function studentTeachers()

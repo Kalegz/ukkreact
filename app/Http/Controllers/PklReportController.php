@@ -21,27 +21,25 @@ class PklReportController extends Controller
             'student_id' => 'required|exists:students,id',
             'teacher_id' => 'required|exists:teachers,id',
             'industry_id' => 'required|exists:industries,id',
-            'start_date' => 'required|date', // Accepts YYYY-MM-DD
+            'start_date' => 'required|date',
             'end_date' => [
                 'required',
-                'date', // Accepts YYYY-MM-DD
-                'after:start_date', // Ensures end_date is after start_date
+                'date',
+                'after:start_date', 
                 function ($attribute, $value, $fail) use ($request) {
-                    $startDate = Carbon::parse($request->input('start_date')); // Parse YYYY-MM-DD
-                    $endDate = Carbon::parse($value); // Parse YYYY-MM-DD
+                    $startDate = Carbon::parse($request->input('start_date')); 
+                    $endDate = Carbon::parse($value); 
                     Log::info('Parsed Start Date: ' . $startDate->toDateString() . ', Parsed End Date: ' . $endDate->toDateString());
-
-                    // Ensure end_date is after start_date (redundant check for safety)
+                    
                     if ($endDate->lessThanOrEqualTo($startDate)) {
                         $fail('The end date must be after the start date.');
                         return;
                     }
 
-                    // Calculate positive difference with startDate first
                     $daysDifference = $startDate->diffInDays($endDate);
                     Log::info('Days Difference: ' . $daysDifference);
 
-                    if ($daysDifference < 90) {
+                    if ($daysDifference < -90) {
                         $fail('The PKL duration must be at least 90 days.');
                     }
                 },

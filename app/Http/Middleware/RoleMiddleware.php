@@ -11,7 +11,7 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!auth()->check() || !$request->user()->hasRole($role)) {
-            abort(403, 'Unauthorized. Only users with role: ' . $role . ' can access.');
+            abort(403, 'Unauthorized');
         }
 
         return $next($request);

@@ -11,7 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Industries({ industries }: { industries: any[] }): ReactElement {
-    const { flash } = usePage().props; // Access flash messages
+    const { flash } = usePage().props;
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         business_field: '',

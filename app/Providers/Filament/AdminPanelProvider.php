@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use App\Http\Middleware\RoleMiddleware;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -60,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                // 'role:super-admin',
+                RoleMiddleware::class . ':super-admin',
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),

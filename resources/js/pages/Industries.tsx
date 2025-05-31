@@ -1,17 +1,17 @@
+import { Head, useForm, router } from '@inertiajs/react';
+import { useState, useEffect, type ReactElement } from 'react';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { useState, type ReactElement } from 'react';
-import { type BreadcrumbItem } from '@/types';
+import FlashMessage from '@/components/flash-message';
+import Pagination from '@/components/pagination';
+import Modal from '@/components/modal';
+import { useDebounce } from '@/components/use-debounce';
+import { type BreadcrumbItem, type Industry, type PaginationData, type IndustriesProps } from '@/types/custom';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Industries',
-        href: '/industries',
-    },
+    { title: 'Industries', href: '/industries' },
 ];
 
-export default function Industries({ industries }: { industries: any[] }): ReactElement {
-    const { flash } = usePage().props;
+export default function Industries({ industries, filters, pagination }: IndustriesProps): ReactElement {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         business_field: '',
@@ -22,6 +22,16 @@ export default function Industries({ industries }: { industries: any[] }): React
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [search, setSearch] = useState(filters?.search || '');
+    const debouncedSearch = useDebounce(search, 300);
+
+    useEffect(() => {
+        router.get(
+            route('industries'),
+            { search: debouncedSearch },
+            { preserveState: true, preserveScroll: true, replace: true }
+        );
+    }, [debouncedSearch]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,158 +43,111 @@ export default function Industries({ industries }: { industries: any[] }): React
         });
     };
 
+    const handlePageChange = (page: number) => {
+        router.get(
+            route('industries'),
+            { search, page },
+            { preserveState: true, preserveScroll: true, replace: true }
+        );
+    };
+
+    if (!industries || !pagination) {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title="Industries" />
+                <div className="p-4 sm:p-6 mt-4 text-red-500">Error: Missing industries or pagination data</div>
+            </AppLayout>
+        );
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Industries" />
-
-            <div className="p-6 mt-4 rounded-lg shadow-md relative">
-                {/* Flash Messages */}
-                {flash.success && (
-                    <div className="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
-                        {flash.success}
+            <div className="p-4 sm:p-6 mt-4 rounded-lg shadow-md bg-white dark:bg-gray-900">
+                <FlashMessage />
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Industries</h1>
+                    <div className="flex flex-col sm:flex-row gap-4 items-center">
+                        <input
+                            type="text"
+                            placeholder="Search Industry's name..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="p-2 border border-gray-300 rounded w-full sm:w-72 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                            aria-label="Search industries"
+                        />
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto cursor-pointer"
+                        >
+                            + Create Industry
+                        </button>
                     </div>
-                )}
-                {flash.error && (
-                    <div className="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
-                        {flash.error}
-                    </div>
-                )}
-
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold">Industries</h1>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-                    >
-                        + Create Industry
-                    </button>
                 </div>
 
                 {industries.length === 0 ? (
-                    <div className="text-gray-600">No Industries Found</div>
+                    <div className="text-gray-600 dark:text-gray-400 text-center">No Industries Found</div>
                 ) : (
-                    <ul className="space-y-2">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {industries.map((industry) => (
-                            <li key={industry.id} className="p-2 border rounded-md">
-                                <p className="font-semibold">{industry.name}</p>
-                                {industry.address && <p className="text-sm text-gray-500">{industry.address}</p>}
+                            <li key={industry.id} className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800">
+                                <p className="mb-2 font-semibold text-lg text-gray-900 dark:text-gray-100">{industry.name}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Address: {industry.address || 'N/A'}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Business Field: {industry.business_field || 'N/A'}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Contact: {industry.contact || 'N/A'}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Email: {industry.email || 'N/A'}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Web: {industry.website || 'N/A'}</p>
                             </li>
                         ))}
                     </ul>
                 )}
-            </div>
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg relative">
-                        <h2 className="text-xl font-semibold mb-4">Create Industry</h2>
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                        >
-                            ✖
-                        </button>
+                <Pagination
+                    currentPage={pagination.current_page}
+                    lastPage={pagination.last_page}
+                    onPageChange={handlePageChange}
+                />
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium">
-                                    Name*
+                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create Industry">
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {[
+                            { id: 'name', label: 'Name*', type: 'text' },
+                            { id: 'business_field', label: 'Business Field', type: 'text' },
+                            { id: 'address', label: 'Address', type: 'text' },
+                            { id: 'contact', label: 'Contact', type: 'text' },
+                            { id: 'email', label: 'Email', type: 'email' },
+                            { id: 'website', label: 'Website', type: 'url' },
+                        ].map((field) => (
+                            <div key={field.id}>
+                                <label htmlFor={field.id} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {field.label}
                                 </label>
                                 <input
-                                    type="text"
-                                    id="name"
-                                    value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                    required
+                                    type={field.type}
+                                    id={field.id}
+                                    value={data[field.id as keyof typeof data]}
+                                    onChange={(e) => setData(field.id as keyof typeof data, e.target.value)}
+                                    className="w-full p-2 border border-gray-300 rounded-md bg-white dark:bg-[#171717] text-gray-900 dark:text-gray-100"
+                                    required={field.id === 'name'}
+                                    aria-describedby={errors[field.id as keyof typeof errors] ? `${field.id}-error` : undefined}
                                 />
-                                {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="business_field" className="block text-sm font-medium">
-                                    Business Field
-                                </label>
-                                <input
-                                    type="text"
-                                    id="business_field"
-                                    value={data.business_field}
-                                    onChange={(e) => setData('business_field', e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
-                                {errors.business_field && (
-                                    <div className="text-red-500 text-sm">{errors.business_field}</div>
+                                {errors[field.id as keyof typeof errors] && (
+                                    <div id={`${field.id}-error`} className="text-red-500 text-sm mt-1">
+                                        {errors[field.id as keyof typeof errors]}
+                                    </div>
                                 )}
                             </div>
-
-                            <div>
-                                <label htmlFor="address" className="block text-sm font-medium">
-                                    Address
-                                </label>
-                                <input
-                                    type="text"
-                                    id="address"
-                                    value={data.address}
-                                    onChange={(e) => setData('address', e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
-                                {errors.address && <div className="text-red-500 text-sm">{errors.address}</div>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="contact" className="block text-sm font-medium">
-                                    Contact
-                                </label>
-                                <input
-                                    type="text"
-                                    id="contact"
-                                    value={data.contact}
-                                    onChange={(e) => setData('contact', e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
-                                {errors.contact && <div className="text-red-500 text-sm">{errors.contact}</div>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
-                                {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="website" className="block text-sm font-medium">
-                                    Website
-                                </label>
-                                <input
-                                    type="url"
-                                    id="website"
-                                    value={data.website}
-                                    onChange={(e) => setData('website', e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
-                                />
-                                {errors.website && <div className="text-red-500 text-sm">{errors.website}</div>}
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-                            >
-                                Submit
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            )}
+                        ))}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto disabled:opacity-50 cursor-pointer"
+                        >
+                            Submit
+                        </button>
+                    </form>
+                </Modal>
+            </div>
         </AppLayout>
     );
 }

@@ -3,20 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use Illuminate\Http\Request;
+use App\Models\Teacher;
+use App\Models\Industry;
 use App\Models\PKL_Assignment;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
 
 class PklReportController extends Controller
 {
+    public function index(Request $request)
+    {
+        $search = $request->query('search');
+        $page = $request->query('page', 1);
+        $perPage = 9;
+
+        $pklAssignments = PKL_Assignment::query()
+            ->with(['student', 'teacher', 'industry'])
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
+                });
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        $students = Student::all();
+        $teachers = Teacher::all();
+        $industries = Industry::all();
+
+        return Inertia::render('PklReport', [
+            'pklAssignments' => $pklAssignments->items(),
+            'pagination' => [
+                'current_page' => $pklAssignments->currentPage(),
+                'last_page' => $pklAssignments->lastPage(),
+                'per_page' => $pklAssignments->perPage(),
+                'total' => $pklAssignments->total(),
+            ],
+            'filters' => ['search' => $search],
+            'students' => $students,
+            'teachers' => $teachers,
+            'industries' => $industries,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
-        // Log raw input data
-        Log::info('Raw Start Date: ' . $request->input('start_date') . ', Raw End Date: ' . $request->input('end_date'));
-
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'teacher_id' => 'required|exists:teachers,id',
@@ -29,7 +63,6 @@ class PklReportController extends Controller
                 function ($attribute, $value, $fail) use ($request) {
                     $startDate = Carbon::parse($request->input('start_date')); 
                     $endDate = Carbon::parse($value); 
-                    Log::info('Parsed Start Date: ' . $startDate->toDateString() . ', Parsed End Date: ' . $endDate->toDateString());
                     
                     if ($endDate->lessThanOrEqualTo($startDate)) {
                         $fail('The end date must be after the start date.');
@@ -37,9 +70,8 @@ class PklReportController extends Controller
                     }
 
                     $daysDifference = $startDate->diffInDays($endDate);
-                    Log::info('Days Difference: ' . $daysDifference);
 
-                    if ($daysDifference < -90) {
+                    if ($daysDifference < 90) {
                         $fail('The PKL duration must be at least 90 days.');
                     }
                 },
@@ -50,7 +82,6 @@ class PklReportController extends Controller
 
         try {
             $student = Student::find($validated['student_id']);
-            // Check if a PKL report already exists for this student
             $existingReport = PKL_Assignment::where('student_id', $student->id)->exists();
             if ($existingReport) {
                 DB::rollBack();
@@ -58,10 +89,7 @@ class PklReportController extends Controller
             }
 
             PKL_Assignment::create($validated);
-
-            // Update the student's report_status to 1
-            $student->update(['report_status' => 1]);
-
+            $student->update(['pkl_report' => '1']);
             DB::commit();
 
             return redirect()->route('pkl-report')->with('success', 'PKL Report created successfully.');

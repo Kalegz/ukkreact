@@ -9,9 +9,28 @@ use Illuminate\Http\RedirectResponse;
 
 class IndustryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->query('search');
+        $page = $request->query('page', 1);
+        $perPage = 9;
+
+        $industries = Industry::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return Inertia::render('Industries', [
+            'industries' => $industries->items(),
+            'pagination' => [
+                'current_page' => $industries->currentPage(),
+                'last_page' => $industries->lastPage(),
+                'per_page' => $industries->perPage(),
+                'total' => $industries->total(),
+            ],
+            'filters' => ['search' => $search],
+        ]);
     }
     
     public function store(Request $request): RedirectResponse

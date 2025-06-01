@@ -6,6 +6,7 @@ export type BreadcrumbItem = {
 export type Student = {
     id: number;
     name: string;
+    email: string;
 };
 
 export type Teacher = {
@@ -46,10 +47,12 @@ export type PklReportProps = {
     industries: Industry[];
     pagination: PaginationData;
     filters?: { search: string };
+    authStudent?: Student | null;
 };
 
 export type IndustriesProps = {
     industries: Industry[];
     pagination: PaginationData;
     filters?: { search: string };
+    authStudent?: Student | null;
 };

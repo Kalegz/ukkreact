@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('nip')->unique();
+            $table->enum('gender', ['L', 'P']);
             $table->string('address');
             $table->string('contact');
             $table->string('email');

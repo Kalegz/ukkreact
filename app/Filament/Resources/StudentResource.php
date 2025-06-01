@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\StudentResource\Pages;
-use App\Filament\Resources\StudentResource\RelationManagers;
-use App\Models\Student;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Student;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\StudentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\StudentResource\RelationManagers;
 
 class StudentResource extends Resource
 {
@@ -38,8 +39,8 @@ class StudentResource extends Resource
                         Forms\Components\Select::make('gender')
                             ->required()
                             ->options([
-                                'Laki-laki' => 'Laki-laki',
-                                'Perempuan' => 'Perempuan',
+                                'L' => 'Laki-laki',
+                                'P' => 'Perempuan',
                             ])
                             ->native(false),
                             
@@ -83,16 +84,18 @@ class StudentResource extends Resource
                     ->sortable()
                     ->searchable(),
                     
-                Tables\Columns\TextColumn::make('gender')
-                    ->sortable()
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('gender_display')
+                    ->label('Gender')
+                    ->getStateUsing(function (Student $record): string {
+                        return DB::selectOne('SELECT get_gender_display(?) as gender_display', [$record->gender])?->gender_display ?? 'Unknown';
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query->orderByRaw('get_gender_display(gender) ' . $direction);
+                    }),
                     
-                Tables\Columns\TextColumn::make('email')
-                    ->sortable()
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('email'),
                     
-                Tables\Columns\TextColumn::make('contact')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('contact'),
                     
                 Tables\Columns\ImageColumn::make('photo')
                     ->circular()

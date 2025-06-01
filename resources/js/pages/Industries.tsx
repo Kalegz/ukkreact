@@ -11,7 +11,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Industries', href: '/industries' },
 ];
 
-export default function Industries({ industries, filters, pagination }: IndustriesProps): ReactElement {
+export default function Industries({ industries, filters, pagination, authStudent }: IndustriesProps): ReactElement {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         business_field: '',
@@ -23,6 +23,7 @@ export default function Industries({ industries, filters, pagination }: Industri
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [search, setSearch] = useState(filters?.search || '');
+    const [formError, setFormError] = useState<string | null>(null);
     const debouncedSearch = useDebounce(search, 300);
 
     useEffect(() => {
@@ -35,7 +36,17 @@ export default function Industries({ industries, filters, pagination }: Industri
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setFormError(null);
+
+        if (!authStudent) {
+            setFormError('Only students can create industries.');
+            return;
+        }
+
         post(route('industries.store'), {
+            onError: (errors) => {
+                setFormError(errors.name || errors.email || errors.website || 'An error occurred.');
+            },
             onSuccess: () => {
                 setIsModalOpen(false);
                 reset();
@@ -78,7 +89,9 @@ export default function Industries({ industries, filters, pagination }: Industri
                         />
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto cursor-pointer"
+                            disabled={!authStudent}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto disabled:opacity-50 cursor-pointer"
+                            title={authStudent ? 'Create Industry' : 'Only students can create industries'}
                         >
                             + Create Industry
                         </button>
@@ -110,6 +123,9 @@ export default function Industries({ industries, filters, pagination }: Industri
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create Industry">
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {formError && (
+                            <div className="p-2 bg-red-100 border-l-4 border-red-500 text-red-700">{formError}</div>
+                        )}
                         {[
                             { id: 'name', label: 'Name*', type: 'text' },
                             { id: 'business_field', label: 'Business Field', type: 'text' },
@@ -140,7 +156,7 @@ export default function Industries({ industries, filters, pagination }: Industri
                         ))}
                         <button
                             type="submit"
-                            disabled={processing}
+                            disabled={processing || !authStudent}
                             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto disabled:opacity-50 cursor-pointer"
                         >
                             Submit

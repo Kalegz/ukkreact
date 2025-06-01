@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PKL_Assignment extends Model
 {
@@ -12,19 +13,22 @@ class PKL_Assignment extends Model
         'teacher_id', 'student_id', 'industry_id', 'start_date', 'end_date'
     ];
 
-    protected $dates = ['start_date', 'end_date'];
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
 
-    public function teacher()
+    public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class);
     }
 
-    public function student()
+    public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
     }
 
-    public function industry()
+    public function industry(): BelongsTo
     {
         return $this->belongsTo(Industry::class);
     }

@@ -15,14 +15,13 @@ export default function Dashboard({ user }) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                {/* Grid placeholder tetap sama */}
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                     </div>
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
                         {/* <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" /> */}
-                        <h1 style={{paddingTop: "25%"}} className="text-center item-center text-2xl font-bold">Selamat Datang, {user.name}!</h1>
+                        <h1 style={{paddingTop: "25%"}} className="text-center item-center text-2xl font-bold">Welcome, {user.name}!</h1>
                     </div>
                     <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
                         <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />

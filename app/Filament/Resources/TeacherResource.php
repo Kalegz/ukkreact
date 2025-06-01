@@ -35,6 +35,11 @@ class TeacherResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
+
+                        Forms\Components\TextInput::make('nip')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(2),
                             
                         Forms\Components\Textarea::make('address')
                             ->required()
@@ -69,18 +74,13 @@ class TeacherResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('address')
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('nip'),
 
                 Tables\Columns\TextColumn::make('contact')
-                    ->searchable()
-                    ->sortable()
                     ->label('Contact'), 
 
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
 
                 Tables\Columns\ImageColumn::make('photo')
                     ->label('Photo')

@@ -18,11 +18,12 @@ export default function PklReport({
     industries,
     pagination,
     filters,
+    authStudent,
 }: PklReportProps): ReactElement {
     const { auth } = usePage().props;
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        student_id: '',
+        student_id: authStudent ? authStudent.id.toString() : '',
         teacher_id: '',
         industry_id: '',
         start_date: '',
@@ -46,6 +47,11 @@ export default function PklReport({
         e.preventDefault();
         setFormError(null);
 
+        if (!authStudent) {
+            setFormError('No student account associated with your email.');
+            return;
+        }
+
         if (data.start_date && data.end_date) {
             const startDate = new Date(data.start_date);
             const endDate = new Date(data.end_date);
@@ -63,7 +69,9 @@ export default function PklReport({
         }
 
         post(route('pkl-report.store'), {
-            onError: () => {},
+            onError: (errors) => {
+                setFormError(errors.student_id || errors.teacher_id || errors.industry_id || errors.start_date || errors.end_date || 'An error occurred.');
+            },
             onSuccess: () => {
                 setIsModalOpen(false);
                 reset();
@@ -115,7 +123,9 @@ export default function PklReport({
                         />
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto cursor-pointer"
+                            disabled={!authStudent}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto disabled:opacity-50 cursor-pointer"
+                            title={authStudent ? 'Create PKL Report' : 'No student account linked to your email'}
                         >
                             + Create PKL Report
                         </button>
@@ -131,7 +141,7 @@ export default function PklReport({
                             <table className="hidden sm:table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead>
                                     <tr>
-                                        {['Student', 'Teacher', 'Industry', 'Start Date', 'End Date'].map((header) => (
+                                        {['Student', 'Gender', 'Teacher', 'Industry', 'Start Date', 'End Date'].map((header) => (
                                             <th
                                                 key={header}
                                                 className="px-4 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
@@ -146,6 +156,9 @@ export default function PklReport({
                                         <tr key={assignment.id}>
                                             <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                                                 {assignment.student?.name || 'N/A'}
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                {assignment.student?.gender_display || 'N/A'}
                                             </td>
                                             <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
                                                 {assignment.teacher?.name || 'N/A'}
@@ -168,7 +181,10 @@ export default function PklReport({
                                 {pklAssignments.map((assignment) => (
                                     <div key={assignment.id} className="p-4 border rounded-md bg-white dark:bg-gray-700">
                                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">Student:</span> {assignment.student?. SAE || 'N/A'}
+                                            <span className="font-semibold">Student:</span> {assignment.student?.name || 'N/A'}
+                                        </p>
+                                        <p className="text-sm text-gray-900 dark:text-gray-100">
+                                            <span className="font-semibold">Gender:</span> {assignment.student?.gender_display || 'N/A'}
                                         </p>
                                         <p className="text-sm text-gray-900 dark:text-gray-100">
                                             <span className="font-semibold">Teacher:</span> {assignment.teacher?.name || 'N/A'}
@@ -210,18 +226,30 @@ export default function PklReport({
                                 onChange={(e) => setData('student_id', e.target.value)}
                                 className="p-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-[#171717] text-gray-900 dark:text-gray-100"
                                 required
+                                disabled={!!authStudent}
                                 aria-describedby={errors.student_id ? 'student_id-error' : undefined}
                             >
-                                <option value="">Select Student</option>
-                                {students.map((student) => (
-                                    <option key={student.id} value={student.id}>
-                                        {student.name}
-                                    </option>
-                                ))}
+                                {authStudent ? (
+                                    <option value={authStudent.id}>{authStudent.name}</option>
+                                ) : (
+                                    <>
+                                        <option value="">Select Student</option>
+                                        {students.map((student) => (
+                                            <option key={student.id} value={student.id}>
+                                                {student.name}
+                                            </option>
+                                        ))}
+                                    </>
+                                )}
                             </select>
                             {errors.student_id && (
                                 <div id="student_id-error" className="text-red-500 text-sm mt-1">
                                     {errors.student_id}
+                                </div>
+                            )}
+                            {!authStudent && (
+                                <div className="text-red-500 text-sm mt-1">
+                                    No student account linked to your email.
                                 </div>
                             )}
                         </div>
@@ -333,7 +361,7 @@ export default function PklReport({
 
                         <button
                             type="submit"
-                            disabled={processing}
+                            disabled={processing || !authStudent}
                             className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto disabled:opacity-50 cursor-pointer"
                         >
                             Create PKL Report

@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('gender');
+            $table->integer('nis')->unique();
+            $table->enum('gender', ['L', 'P']);
             $table->string('address');
             $table->string('contact');
             $table->string('email');
             $table->string('photo')->nullable();
-            $table->enum('status', ['0', '1'])->default('0');
+            $table->enum('pkl_report', ['0', '1'])->default('0');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

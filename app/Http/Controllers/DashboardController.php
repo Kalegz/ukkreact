@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Student;
-use App\Models\Teacher; // Assuming a Teacher model exists
+use App\Models\Teacher;
 use App\Models\PKL_Assignment;
 
 class DashboardController extends Controller
@@ -72,7 +72,6 @@ class DashboardController extends Controller
                 }
             }
 
-            // Fallback for other roles or if no student/teacher record is found
             if (!$dashboardUser) {
                 $dashboardUser = [
                     'role' => $user->hasRole('student') ? 'student' : ($user->hasRole('teacher') ? 'teacher' : 'unknown'),

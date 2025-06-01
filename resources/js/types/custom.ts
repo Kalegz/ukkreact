@@ -1,5 +1,3 @@
-// types/custom/index.ts
-
 export type BreadcrumbItem = {
     title: string;
     href: string;

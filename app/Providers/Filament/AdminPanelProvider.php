@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => '#FF5FFF',
+                'primary' => Color::Pink,
             ])
             ->discoverResources(
                 in: app_path('Filament/Resources'),

@@ -2,9 +2,10 @@
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\IndustryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PklReportController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -14,16 +15,7 @@ Route::get('/register', [RegisteredUserController::class, 'create'])->name('regi
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        $user = Auth::user();
-        return Inertia::render('Dashboard', [
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ]
-        ]);
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
     Route::get('/industries', [IndustryController::class, 'index'])->name('industries');
     Route::post('/industries', [IndustryController::class, 'store'])->name('industries.store');

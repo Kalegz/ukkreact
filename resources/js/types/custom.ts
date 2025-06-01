@@ -1,3 +1,5 @@
+// types/custom/index.ts
+
 export type BreadcrumbItem = {
     title: string;
     href: string;
@@ -12,6 +14,12 @@ export type Student = {
 export type Teacher = {
     id: number;
     name: string;
+    nip?: string;
+    gender?: string;
+    address?: string;
+    contact?: string;
+    email?: string;
+    photo?: string | null;
 };
 
 export type Industry = {
@@ -55,4 +63,14 @@ export type IndustriesProps = {
     pagination: PaginationData;
     filters?: { search: string };
     authStudent?: Student | null;
+};
+
+export type User = {
+    name: string;
+    nis: string | null;
+    gender: string | null;
+    address: string | null;
+    email: string | null;
+    photo: string | null;
+    pkl_assignment?: PKLAssignment | null;
 };

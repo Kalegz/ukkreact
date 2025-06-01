@@ -46,12 +46,14 @@ class IndustryController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'business_field' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:255',
-            'contact' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'website' => 'nullable|url|max:255',
+            'name' => 'required|string|max:255|unique:industries,name',
+            'business_field' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'contact' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'website' => 'required|url|max:255',
+        ], [
+            'name.unique' => 'INDUSTRY ALREADY EXISTS',
         ]);
 
         $authEmail = Auth::user()->email;

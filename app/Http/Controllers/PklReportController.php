@@ -80,8 +80,8 @@ class PklReportController extends Controller
                 'date',
                 'after:start_date', 
                 function ($attribute, $value, $fail) use ($request) {
-                    $startDate = Carbon::parse($request->input('start_date')); 
-                    $endDate = Carbon::parse($value); 
+                    $startDate = Carbon::parse($request->input('start_date'));
+                    $endDate = Carbon::parse($value);
                     
                     if ($endDate->lessThanOrEqualTo($startDate)) {
                         $fail('The end date must be after the start date.');

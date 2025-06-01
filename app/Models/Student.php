@@ -3,15 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
     protected $fillable = [
-        'name', 'nis', 'gender', 'address', 'contact', 'email', 'photo', 'pkl_report'
-    ];
-
-    protected $casts = [
-        'pkl_report' => 'string',
+        'name', 'nis', 'gender', 'address', 'contact', 'email', 'photo',
     ];
 
     public function teacherIndustries()
@@ -30,6 +29,11 @@ class Student extends Model
 
     public function pklAssignments()
     {
-        return $this->hasMany(PKL_Assignment::class);
+        return $this->hasMany(PKL_Assignment::class, 'student_id');
+    }
+
+    public function pklReport()
+    {
+        return $this->hasOne(PKLReport::class, 'student_id');
     }
 }

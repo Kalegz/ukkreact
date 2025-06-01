@@ -6,6 +6,7 @@ import Pagination from '@/components/pagination';
 import Modal from '@/components/modal';
 import { useDebounce } from '@/components/use-debounce';
 import { type BreadcrumbItem, type Industry, type PaginationData, type IndustriesProps } from '@/types/custom';
+import { Briefcase, MapPin, Phone, Mail, Globe } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Industries', href: '/industries' },
@@ -38,14 +39,17 @@ export default function Industries({ industries, filters, pagination, authStuden
         e.preventDefault();
         setFormError(null);
 
-        if (!authStudent) {
-            setFormError('Only students can create industries.');
-            return;
-        }
-
         post(route('industries.store'), {
             onError: (errors) => {
-                setFormError(errors.name || errors.email || errors.website || 'An error occurred.');
+                setFormError(
+                    errors.name ||
+                    errors.business_field ||
+                    errors.address ||
+                    errors.contact ||
+                    errors.email ||
+                    errors.website ||
+                    'An error occurred while creating the industry.'
+                );
             },
             onSuccess: () => {
                 setIsModalOpen(false);
@@ -104,12 +108,36 @@ export default function Industries({ industries, filters, pagination, authStuden
                     <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {industries.map((industry) => (
                             <li key={industry.id} className="p-4 border rounded-md bg-gray-50 dark:bg-gray-800">
-                                <p className="mb-2 font-semibold text-lg text-gray-900 dark:text-gray-100">{industry.name}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Address: {industry.address || 'N/A'}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Business Field: {industry.business_field || 'N/A'}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Contact: {industry.contact || 'N/A'}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Email: {industry.email || 'N/A'}</p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Web: {industry.website || 'N/A'}</p>
+                                <p className="mb-2 font-semibold text-lg text-gray-900 dark:text-gray-100 flex items-center">
+                                    {industry.name}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                                    <MapPin className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                                    {industry.address}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                                    <Briefcase className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                                    {industry.business_field}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                                    <Phone className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                                    {industry.contact}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                                    <Mail className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                                    {industry.email}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                                    <Globe className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                                    <a
+                                        href={industry.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                    >
+                                        {industry.website}
+                                    </a>
+                                </p>
                             </li>
                         ))}
                     </ul>
@@ -123,16 +151,16 @@ export default function Industries({ industries, filters, pagination, authStuden
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create Industry">
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {formError && (
+                        {/* {formError && (
                             <div className="p-2 bg-red-100 border-l-4 border-red-500 text-red-700">{formError}</div>
-                        )}
+                        )} */}
                         {[
-                            { id: 'name', label: 'Name*', type: 'text' },
-                            { id: 'business_field', label: 'Business Field', type: 'text' },
-                            { id: 'address', label: 'Address', type: 'text' },
-                            { id: 'contact', label: 'Contact', type: 'text' },
-                            { id: 'email', label: 'Email', type: 'email' },
-                            { id: 'website', label: 'Website', type: 'url' },
+                            { id: 'name', label: 'Name*', type: 'text', required: true },
+                            { id: 'business_field', label: 'Business Field*', type: 'text', required: true },
+                            { id: 'address', label: 'Address*', type: 'text', required: true },
+                            { id: 'contact', label: 'Contact*', type: 'text', required: true },
+                            { id: 'email', label: 'Email*', type: 'email', required: true },
+                            { id: 'website', label: 'Website*', type: 'url', required: true },
                         ].map((field) => (
                             <div key={field.id}>
                                 <label htmlFor={field.id} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -144,7 +172,7 @@ export default function Industries({ industries, filters, pagination, authStuden
                                     value={data[field.id as keyof typeof data]}
                                     onChange={(e) => setData(field.id as keyof typeof data, e.target.value)}
                                     className="w-full p-2 border border-gray-300 rounded-md bg-white dark:bg-[#171717] text-gray-900 dark:text-gray-100"
-                                    required={field.id === 'name'}
+                                    required={field.required}
                                     aria-describedby={errors[field.id as keyof typeof errors] ? `${field.id}-error` : undefined}
                                 />
                                 {errors[field.id as keyof typeof errors] && (

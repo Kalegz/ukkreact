@@ -119,8 +119,8 @@ export default function Welcome() {
     );
 }
 
-// declare global {
-//     interface Window {
-//         particlesJS: (id: string, config: any) => void;
-//     }
-// }
+declare global {
+    interface Window {
+        particlesJS: (id: string, config: any) => void;
+    }
+}

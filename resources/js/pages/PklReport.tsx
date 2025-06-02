@@ -141,7 +141,7 @@ export default function PklReport({
                             <table className="hidden sm:table min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead>
                                     <tr>
-                                        {['Student', 'Gender', 'Teacher', 'Industry', 'Start Date', 'End Date'].map((header) => (
+                                        {['Student', 'Gender', 'Teacher', 'Industry', 'Start Date', 'End Date', 'Duration'].map((header) => (
                                             <th
                                                 key={header}
                                                 className="px-4 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
@@ -152,54 +152,72 @@ export default function PklReport({
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                                    {pklAssignments.map((assignment) => (
-                                        <tr key={assignment.id}>
-                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                {assignment.student?.name || 'N/A'}
-                                            </td>
-                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                {assignment.student?.gender_display || 'N/A'}
-                                            </td>
-                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                {assignment.teacher?.name || 'N/A'}
-                                            </td>
-                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                {assignment.industry?.name || 'N/A'}
-                                            </td>
-                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                {formatDate(assignment.start_date)}
-                                            </td>
-                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
-                                                {formatDate(assignment.end_date)}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {pklAssignments.map((assignment) => {
+                                        const startDate = new Date(assignment.start_date);
+                                        const endDate = new Date(assignment.end_date);
+                                        const durationDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+                                        return (
+                                            <tr key={assignment.id}>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {assignment.student?.name || 'N/A'}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {assignment.student?.gender_display || 'N/A'}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {assignment.teacher?.name || 'N/A'}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {assignment.industry?.name || 'N/A'}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {formatDate(assignment.start_date)}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {formatDate(assignment.end_date)}
+                                                </td>
+                                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                                    {durationDays} days
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
 
                             <div className="sm:hidden space-y-4">
-                                {pklAssignments.map((assignment) => (
-                                    <div key={assignment.id} className="p-4 border rounded-md bg-white dark:bg-gray-700">
-                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">Student:</span> {assignment.student?.name || 'N/A'}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">Gender:</span> {assignment.student?.gender_display || 'N/A'}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">Teacher:</span> {assignment.teacher?.name || 'N/A'}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">Industry:</span> {assignment.industry?.name || 'N/A'}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">Start Date:</span> {formatDate(assignment.start_date)}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <span className="font-semibold">End Date:</span> {formatDate(assignment.end_date)}
-                                        </p>
-                                    </div>
-                                ))}
+                                {pklAssignments.map((assignment) => {
+                                    const startDate = new Date(assignment.start_date);
+                                    const endDate = new Date(assignment.end_date);
+                                    const durationDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+                                    return (
+                                        <div key={assignment.id} className="p-4 border rounded-md bg-white dark:bg-gray-700">
+                                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">Student:</span> {assignment.student?.name || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">Gender:</span> {assignment.student?.gender_display || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">Teacher:</span> {assignment.teacher?.name || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">Industry:</span> {assignment.industry?.name || 'N/A'}
+                                            </p>
+                                            <p className="text-sm text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">Start Date:</span> {formatDate(assignment.start_date)}
+                                            </p>
+                                            <p className="text-sm text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">End Date:</span> {formatDate(assignment.end_date)}
+                                            </p>
+                                            <p className="text-sm text-gray-900 dark:text-gray-100">
+                                                <span className="font-semibold">Duration:</span> {durationDays} days
+                                            </p>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </>
                     )}
@@ -362,7 +380,7 @@ export default function PklReport({
                         <button
                             type="submit"
                             disabled={processing || !authStudent}
-                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w-full sm:w-auto disabled:opacity-50 cursor-pointer"
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 w  w-full sm:w-auto disabled:opacity-50 cursor-pointer"
                         >
                             Create PKL Report
                         </button>

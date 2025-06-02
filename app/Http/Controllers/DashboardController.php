@@ -24,6 +24,7 @@ class DashboardController extends Controller
                         ->with(['industry', 'teacher'])
                         ->latest('start_date')
                         ->first();
+                    $teacher = Teacher::where('id', $pklAssignment->teacher->id)->first();
                     $dashboardUser = [
                         'role' => 'student',
                         'name' => $student->name,
@@ -32,7 +33,7 @@ class DashboardController extends Controller
                         'address' => $student->address ?? null,
                         'contact' => $student->contact ?? null,
                         'email' => $student->email ?? null,
-                        'photo' => $student->photo ?? null,
+                        'photo' => $student->photo ? asset('storage/' . $student->photo) : null,
                         'pkl_assignment' => $pklAssignment ? [
                             'industry' => $pklAssignment->industry ? [
                                 'name' => $pklAssignment->industry->name,
@@ -49,7 +50,7 @@ class DashboardController extends Controller
                                 'address' => $pklAssignment->teacher->address ?? 'N/A',
                                 'contact' => $pklAssignment->teacher->contact ?? 'N/A',
                                 'email' => $pklAssignment->teacher->email ?? 'N/A',
-                                'photo' => $pklAssignment->teacher->photo ?? null,
+                                'photo' => $teacher->photo ? asset('storage/' . $teacher->photo) : null,
                             ] : null,
                             'start_date' => $pklAssignment->start_date->toDateString(),
                             'end_date' => $pklAssignment->end_date->toDateString(),
@@ -67,7 +68,7 @@ class DashboardController extends Controller
                         'address' => $teacher->address ?? null,
                         'contact' => $teacher->contact ?? null,
                         'email' => $teacher->email ?? null,
-                        'photo' => $teacher->photo ?? null,
+                        'photo' => $teacher->photo ? asset('storage/' . $teacher->photo) : null,
                     ];
                 }
             }

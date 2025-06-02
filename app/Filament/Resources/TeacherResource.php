@@ -58,7 +58,7 @@ class TeacherResource extends Resource
 
                         Forms\Components\FileUpload::make('photo')
                             ->image()
-                            ->directory('teachers')
+                            ->directory('teacher-photos')
                             ->columnSpanFull()
                             ->imageEditor(),
                     ])

@@ -8,7 +8,7 @@ use App\Http\Controllers\PklReportController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    return Inertia::render('welcome');
 })->name('home');
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');

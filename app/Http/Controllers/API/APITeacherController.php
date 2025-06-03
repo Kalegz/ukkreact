@@ -43,7 +43,7 @@ class APITeacherController extends Controller
         $teacherData = $request->only(['name', 'nip', 'gender', 'address', 'contact', 'email']);
 
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('photos/teachers', 'public');
+            $photoPath = $request->file('photo')->store('teacher-photos', 'public');
             $teacherData['photo'] = $photoPath;
         }
 
@@ -107,7 +107,7 @@ class APITeacherController extends Controller
             if ($teacher->photo) {
                 Storage::disk('public')->delete($teacher->photo);
             }
-            $photoPath = $request->file('photo')->store('photos/teachers', 'public');
+            $photoPath = $request->file('photo')->store('teacher-photos', 'public');
             $teacherData['photo'] = $photoPath;
         }
 

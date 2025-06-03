@@ -90,7 +90,7 @@ class APIStudentController extends Controller
             if ($student->photo) {
                 Storage::disk('public')->delete($student->photo);
             }
-            $photoPath = $request->file('photo')->store('photos/students', 'public');
+            $photoPath = $request->file('photo')->store('student-photos', 'public');
             $studentData['photo'] = $photoPath;
         }
 

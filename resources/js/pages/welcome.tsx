@@ -42,7 +42,8 @@ export default function Welcome() {
             
             <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gray-900 bg-cover bg-center bg-fixed"
                 style={{
-                    backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop')"
+                    backgroundImage: "url('https://media.istockphoto.com/id/1475998284/id/foto/interior-ruang-server-modern-besar-ilustrasi-rendering-3d.jpg?s=612x612&w=0&k=20&c=YaiueerR_V5agDlp5nNvEpOPJ3idkOmE_FxRXPQ-z3M=')"
+                    // backgroundImage: "url('storage/photos/IMG_20250117_113254.jpg')"
                 }}
             >
                 <canvas id="particles" className="absolute top-0 left-0 w-full h-full -z-10"></canvas>

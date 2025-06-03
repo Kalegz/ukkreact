@@ -37,6 +37,7 @@ class TeacherResource extends Resource
                             ->columnSpan(2),
 
                         Forms\Components\TextInput::make('nip')
+                            ->label('NIP')
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
@@ -74,7 +75,8 @@ class TeacherResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('nip'),
+                Tables\Columns\TextColumn::make('nip')
+                    ->label('NIP'),
 
                 Tables\Columns\TextColumn::make('contact')
                     ->label('Contact'), 

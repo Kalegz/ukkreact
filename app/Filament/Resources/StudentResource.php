@@ -37,6 +37,7 @@ class StudentResource extends Resource
                             ->maxLength(255),
 
                         Forms\Components\TextInput::make('nis')
+                            ->label('NIS')
                             ->required()
                             ->maxLength(255),
                             

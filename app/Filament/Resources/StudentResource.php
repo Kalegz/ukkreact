@@ -35,6 +35,10 @@ class StudentResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
+
+                        Forms\Components\TextInput::make('nis')
+                            ->required()
+                            ->maxLength(255),
                             
                         Forms\Components\Select::make('gender')
                             ->required()
@@ -82,6 +86,11 @@ class StudentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->sortable()
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('nis')
+                    ->sortable()
+                    ->label('NIS')
                     ->searchable(),
                     
                 Tables\Columns\TextColumn::make('gender_display')

@@ -32,18 +32,24 @@ class APIIndustryController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'business_field' => 'required|string|max:255',
-            'address' => 'nullable|string|max:255',
-            'contact' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'website' => 'nullable|url|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'business_field' => 'required|string|max:255',
+                'address' => 'nullable|string|max:255',
+                'contact' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'website' => 'nullable|url|max:255',
+            ]);
 
-        Industry::create($validated);
+            Industry::create($validated);
 
-        return response()->json('success', 'Industry created successfully.');
+            return response()->json(['message' => 'Industry created successfully.'], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred.'], 500);
+        }
     }
 
     /**
@@ -59,7 +65,24 @@ class APIIndustryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $industry = Industry::find($id);
+
+        if (!$industry) {
+            return response()->json(['message' => 'Industry not found.'], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'business_field' => 'sometimes|string|max:255',
+            'address' => 'sometimes|string|max:255',
+            'contact' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255',
+            'website' => 'sometimes|url|max:255',
+        ]);
+
+        $industry->update($validated);
+
+        return response()->json(['message' => 'Industry updated successfully.'], 200);
     }
 
     /**
@@ -67,6 +90,14 @@ class APIIndustryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $industry = Industry::find($id);
+
+        if (!$industry) {
+            return response()->json(['message' => 'Industry not found.'], 404);
+        }
+
+        $industry->delete();
+
+        return response()->json(['message' => 'Industry deleted successfully.'], 200);
     }
 }

@@ -50,7 +50,7 @@ export default function Dashboard({ user }: DashboardProps) {
                                 </p>
                                 <p className="flex items-center">
                                     <UserIcon className="w-4 h-4 mr-2 text-indigo-600" />
-                                    {safeUser.nis || safeUser.nip || 'Not provided'}
+                                    {safeUser.nis || 'Not provided'}
                                 </p>
                                 <p className="flex items-center">
                                     <MapPin className="w-4 h-4 mr-2 text-indigo-600" />

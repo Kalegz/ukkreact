@@ -14,7 +14,6 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         $dashboardUser = null;
-        $pklAssignment = null;
 
         if ($user) {
             if ($user->hasRole('student')) {
@@ -24,7 +23,6 @@ class DashboardController extends Controller
                         ->with(['industry', 'teacher'])
                         ->latest('start_date')
                         ->first();
-                    $teacher = Teacher::where('id', $pklAssignment->teacher->id)->first();
                     $dashboardUser = [
                         'role' => 'student',
                         'name' => $student->name,
@@ -50,7 +48,7 @@ class DashboardController extends Controller
                                 'address' => $pklAssignment->teacher->address ?? 'N/A',
                                 'contact' => $pklAssignment->teacher->contact ?? 'N/A',
                                 'email' => $pklAssignment->teacher->email ?? 'N/A',
-                                'photo' => $teacher->photo ? asset('storage/' . $teacher->photo) : null,
+                                'photo' => $pklAssignment->teacher->photo ? asset('storage/' . $pklAssignment->teacher->photo) : null,
                             ] : null,
                             'start_date' => $pklAssignment->start_date->toDateString(),
                             'end_date' => $pklAssignment->end_date->toDateString(),

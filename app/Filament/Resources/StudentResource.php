@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\StudentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -133,12 +134,21 @@ class StudentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\BulkAction::make('deleteSelected')
+                    ->label('Hapus yang Belum PKL')
+                    ->requiresConfirmation()
+                    ->action(function (Collection $records) {
+                        $recordsToDelete = $records->filter(function ($record) {
+                            return !$record->pkl_report;
+                        });
+
+                        $recordsToDelete->each->delete();
+                    })
+                    ->deselectRecordsAfterCompletion()
+                    ->color('danger')
+                    ->icon('heroicon-o-trash'),
             ]);
     }
 

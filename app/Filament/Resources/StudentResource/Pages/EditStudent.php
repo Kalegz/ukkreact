@@ -12,8 +12,17 @@ class EditStudent extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\DeleteAction::make(),
-        ];
+        $actions = [];
+        
+        if (!$this->record->pkl_report) {
+            $actions[] = Actions\DeleteAction::make();
+        }
+
+        return $actions;
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }

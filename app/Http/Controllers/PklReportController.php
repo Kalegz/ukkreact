@@ -48,7 +48,7 @@ class PklReportController extends Controller
         $authEmail = Auth::user()->email;
         $authStudent = Student::where('email', $authEmail)->first();
 
-        return Inertia::render('PklReport', [
+        return Inertia::render('pkl-report', [
             'pklAssignments' => $pklAssignments->items(),
             'pagination' => [
                 'current_page' => $pklAssignments->currentPage(),

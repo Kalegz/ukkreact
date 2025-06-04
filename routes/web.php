@@ -1,6 +1,8 @@
 <?php
 
 use Inertia\Inertia;
+use App\Models\Student;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\DashboardController;
@@ -15,10 +17,10 @@ Route::get('/register', [RegisteredUserController::class, 'create'])->name('regi
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/industries', [IndustryController::class, 'index'])->name('industries');
-    Route::post('/industries', [IndustryController::class, 'store'])->name('industries.store');
+    Route::post('/industries', [IndustryController::class, 'store'])->name('industries.web.store'); 
 
     Route::get('/pkl-report', [PklReportController::class, 'index'])->name('pkl-report');
     Route::post('/pkl-report', [PklReportController::class, 'store'])->name('pkl-report.store');

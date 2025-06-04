@@ -8,7 +8,6 @@ use App\Http\Controllers\API\APIStudentController;
 use App\Http\Controllers\API\APITeacherController;
 use App\Http\Controllers\API\APIIndustryController;
 
-
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
@@ -22,5 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::Post('logout', [AuthController::class, 'logout']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });

@@ -18,7 +18,7 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 IF OLD.email != NEW.email THEN
-                    UPDATE siswa SET email = NEW.email where email = OLD.email;
+                    UPDATE students SET email = NEW.email where email = OLD.email;
                 END IF;
             END;
         ');

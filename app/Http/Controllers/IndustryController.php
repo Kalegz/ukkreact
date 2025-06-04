@@ -26,7 +26,7 @@ class IndustryController extends Controller
         $authEmail = Auth::user()->email;
         $authStudent = Student::where('email', $authEmail)->select('id', 'name', 'email')->first();
 
-        return Inertia::render('Industries', [
+        return Inertia::render('industries', [
             'industries' => $industries->items(),
             'pagination' => [
                 'current_page' => $industries->currentPage(),

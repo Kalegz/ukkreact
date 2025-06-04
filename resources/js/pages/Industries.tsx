@@ -39,7 +39,7 @@ export default function Industries({ industries, filters, pagination, authStuden
         e.preventDefault();
         setFormError(null);
 
-        post(route('industries.store'), {
+        post(route('industries.web.store'), {
             onError: (errors) => {
                 setFormError(
                     errors.name ||

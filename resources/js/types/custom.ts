@@ -6,7 +6,12 @@ export type BreadcrumbItem = {
 export type Student = {
     id: number;
     name: string;
+    nis: string;
+    gender: 'L' | 'P';
+    address: string;
+    contact: string;
     email: string;
+    photo?: string | null;
 };
 
 export type Teacher = {
@@ -71,4 +76,10 @@ export type User = {
     email: string | null;
     photo: string | null;
     pkl_assignment?: PKLAssignment | null;
+};
+
+export type NavItem = {
+    title: string;
+    href: string;
+    icon: any;
 };

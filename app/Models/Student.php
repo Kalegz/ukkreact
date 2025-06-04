@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Student extends Model
 {
     protected $fillable = [
-        'name', 'nis', 'gender', 'address', 'contact', 'email', 'photo',
+        'name', 'nis', 'gender', 'address', 'contact', 'email', 'photo', 'pkl_report'
     ];
 
     public function teacherIndustries()

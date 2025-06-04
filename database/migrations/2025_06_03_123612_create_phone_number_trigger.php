@@ -11,14 +11,25 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared("
-            CREATE TRIGGER phone_number_trigger
+            CREATE TRIGGER phone_number_trigger_student
             BEFORE INSERT ON students
             FOR EACH ROW
             BEGIN
                 IF NEW.contact LIKE '08%' THEN
                     SET NEW.contact = CONCAT('+628', SUBSTRING(NEW.contact, 3));
                 END IF;
-            END
+            END;
+        ");
+
+        DB::unprepared("
+            CREATE TRIGGER phone_number_trigger_teacher
+            BEFORE INSERT ON teachers
+            FOR EACH ROW
+            BEGIN
+                IF NEW.contact LIKE '08%' THEN
+                    SET NEW.contact = CONCAT('+628', SUBSTRING(NEW.contact, 3));
+                END IF;
+            END;
         ");
     }
 
@@ -27,6 +38,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER IF EXISTS phone_number_trigger;');
+        DB::unprepared('DROP TRIGGER IF EXISTS phone_number_trigger_student;');
+        DB::unprepared('DROP TRIGGER IF EXISTS phone_number_trigger_teacher;');
     }
 };

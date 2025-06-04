@@ -11,10 +11,10 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!auth()->check() ) {
-            abort(403, 'login dlu bro');
+            abort(403, 'you need to login first');
         }
         if (!$request->user()->hasRole($role)) {
-            abort(403, 'Unauthorized');
+            abort(404, 'not found');
         }
 
         return $next($request);
